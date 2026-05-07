@@ -1,0 +1,53 @@
+a
+
+    ƒÚèiº  ã                   @  sÊ   d Z ddlmZ ddlZddlZddlZddlmZ ddlm	Z	 ddl
+mZ ddd	d
+ddd
+ddddddddddddœZdddœdd„Z
+dddœd d!„Zdd"d#œd$d%„Zd&d'œd(d)„Zed*krÆeeƒ ƒ‚dS )+z½DeepPavlov worker for Stage 2 consensus pipeline.
+
+The worker is intended to run under Python 3.9 in a separate environment.
+It reads JSON lines from stdin and writes JSON lines to stdout.
+é    )ÚannotationsN)Úredirect_stdout)ÚAny)Úbuild_modelÚNOUNÚPROPNÚVERBÚADJÚNUMÚADVÚPRONÚADPÚCCONJÚSCONJÚPARTÚINTJÚDETÚAUXÚPUNCTÚSYMÚX)r   r   r   r	   r
+   r   r   r
+   ZPREPr   r   r   r   r   r   r   r   r   r   Ústr)ÚvalueÚreturnc                 C  sZ   g }t | ƒD ]B}t|ƒ}|dks8d|  kr4dkrDn n| d¡ q| |¡ qd |¡S )Nr   i Ø  iÿß  ú Ú )r   ÚordÚappendÚjoin)r   Z
+cleaned_charsÚcharZ	codepoint© r    úscripts\deeppavlov_worker.pyÚ
+sanitize_text(   s     
+r"   z
+str | None)Úfeatsr   c                   sz   t | pdƒ ¡ }|r|dkr dS i ‰ | d¡D ].}d|vr<q.| dd¡\}}| ¡ ˆ | ¡ < q.d ‡ fdd„tˆ ƒD ƒ¡S )Nr   Ú_ú|ú=é   c                 3  s    | ]}|› d ˆ | › V  qdS )r&   Nr    )Ú.0Úkey©Úpairsr    r!   Ú	<genexpr>=   ó    z%canonicalize_feats.<locals>.<genexpr>)r   ÚstripÚsplitr   Úsorted)r#   ÚtextÚitemr)   r   r    r*   r!   Úcanonicalize_feats3   s    r3   zlist[dict[str, str]])Úoutput_textr   c              
+   C  sÈ   g }|   ¡  ¡ D ]²}|  ¡ }|r| d¡r,qt d|¡}t|ƒdk rFqzt|d ƒ W n tyl   Y qY n0 d|d v r|q| t	|d ƒt	|d ƒt
+ |d |d ¡t	|d ƒt|d	 ƒd
+œ¡ q|S )Nú#z
+\t+|\s{2,}é   r   ú-r'   é   é   é   )ZsurfaceZlemmaÚposZraw_posr#   )
+r.   Ú
+splitlinesÚ
+startswithÚrer/   ÚlenÚintÚ
+ValueErrorr   r"   ÚPOS_MAPPINGÚgetr3   )r4   ÚtokensÚlineÚpartsr    r    r!   Úparse_deeppavlov_output@   s.    
+
+
+
+
+ûÿ	rG   r@   )r   c            
+      C  s(  t tjƒ tdddd} W d   ƒ n1 s.0    Y  tj t dddœ¡d ¡ tj ¡  tj	D ]¼}| 
+¡ }|sxqdz<t |¡}| d¡}|dkr W  q$|d	vr¶t
+d
+|› ƒ‚|dkr<t| dd
+¡ƒ}t tjƒ | |gƒ}W d   ƒ n1 sú0    Y  t|tƒr|r|d nd
+}tt|ƒƒ}dd|dœ}nxdd„ | dg ¡D ƒ}	t tjƒ | |	ƒ}W d   ƒ n1 s|0    Y  t|tƒr–|ng }
+dd„ |
+D ƒ}dd|dœ}W nF tyü } z,ddtt|ƒj› d|› ƒdœ}W Y d }~n
+d }~0 0 tj tj|ddd ¡ tj ¡  qddS )NZmorpho_ru_syntagrus_bertT)ZdownloadÚinstallZready)ÚokÚtypeÚ
+rJ   Zshutdown>   ÚanalyzeZ
+analyze_batchzUnsupported command: rL   r1   r   r   Úresult)rI   rJ   rD   c                 S  s   g | ]}t |ƒ‘qS r    )r"   )r(   r2   r    r    r!   Ú
+<listcomp>s   r-   zmain.<locals>.<listcomp>Útextsc                 S  s   g | ]}t t|ƒƒ‘qS r    )rG   r"   )r(   r4   r    r    r!   rN   w   r-   Zresult_batch)rI   rJ   Ztokens_batchFÚerrorz: )rI   rJ   rP   )Zensure_ascii)r   ÚsysÚstderrr   ÚstdoutÚwriteÚjsonÚdumpsÚflushÚstdinr.   ÚloadsrC   rA   r"   Ú
+isinstanceÚlistrG   Ú	ExceptionrJ   Ú__name__)
+ZmodelrE   ZpayloadZcommandr1   Zmodel_resultr4   rD   ZresponserO   ZoutputsZbatch_tokensÚexcr    r    r!   Úmain[   sH    ,
+
+
+
+((ýr_   Ú__main__)Ú__doc__Z
+__future__r   rU   r>   rQ   Ú
+contextlibr   Útypingr   Z
+deeppavlovr   rB   r"   r3   rG   r_   r]   Ú
+SystemExitr    r    r    r!   Ú<module>   s@   î
+*

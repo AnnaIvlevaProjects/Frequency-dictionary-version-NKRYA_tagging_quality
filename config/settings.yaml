@@ -1,0 +1,20 @@
+paths:
+  accuracy_weights_csv: "D:/Projects/AnalizatorsCompare/summary/accuracy_summary_ru_syntagrus-ud-dev.csv"
+  udpipe_model_path: "D:/Projects/AnalizatorsCompare/pythonProject2/.venv/model.udpipe"
+  udpipe_python: "D:/Projects/Frequency-dictionary-version-1-Stanza/.venv/Scripts/python.exe"
+  udpipe_worker_script: "./scripts/udpipe_worker.py"
+  deeppavlov_python39: "C:/Program Files/Python39/python.exe"
+  deeppavlov_worker_script: "./scripts/deeppavlov_worker.py"
+  rnc_eval_texts_root: "D:/Компьютерная лингвистика/RNC_million/sample_ar/TEXTS"
+  rnc_eval_tables_root: "D:/Компьютерная лингвистика/RNC_million/sample_ar/TABLES"
+  rnc_eval_consensus2_source: "D:/Projects/AnalizatorsCompare/pythonProject2/.venv/All_analyzersConsensus2без ЧР.py"
+
+nlp:
+  analyzer: "consensus6"
+  language: "ru"
+  processors: "tokenize,pos,lemma"
+
+eval:
+  output_root: "./output/rnc_eval"
+  scoring_mode: "lexical_clean"
+  limit_docs: 0
